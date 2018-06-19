@@ -1,0 +1,29 @@
+version: '{branch}-{build}'
+skip_non_tags: false
+platform:
+- x86
+- x64
+init:
+- cmd: IF %APPVEYOR_REPO_TAG%==true appveyor UpdateBuild -Version %APPVEYOR_REPO_TAG_NAME%-%APPVEYOR_BUILD_NUMBER%
+before_build:
+- cmd: >-
+    git clone https://github.com/google/zopfli.git
+
+    CD zopfli
+
+    IF %APPVEYOR_REPO_TAG%==true git checkout zopfli-%APPVEYOR_REPO_TAG_NAME%
+build_script:
+- cmd: ..\build.bat
+after_build:
+- cmd: 7z a ..\zopfli-%Platform%.zip *.exe
+artifacts:
+- path: '*.zip'
+  name: zopfli
+deploy:
+- provider: GitHub
+  tag: $(APPVEYOR_REPO_TAG_NAME)
+  auth_token:
+    secure: VAtQqR6IMKnfLauOAUvX3zs+9Y69+lz5MrQh3nz96OoR+rSyFsfjtiVrA6MmHKnG
+  artifact: /.*\.zip/
+  on:
+    APPVEYOR_REPO_TAG: true
