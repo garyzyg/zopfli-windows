@@ -26,5 +26,7 @@ link.exe -nologo						^
 	/LTCG							^
 	/OUT:%1							^
 	*.obj							^
-	user32.lib advapi32.lib					^
-	kernel32.lib						^
+	/NODEFAULTLIB /SUBSYSTEM:CONSOLE			^
+	kernel32.lib msvcrt.lib msvcprt.lib			^
+	/MERGE:.rdata=.text /MERGE:.data=.text			^
+	/ALIGN:16						^
